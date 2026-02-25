@@ -2,7 +2,11 @@ import streamlit as st
 import pandas as pd
 
 def load_investor_details(investor):
-    pass
+    st.title(investor)
+    # load the recent 5 investments of the investor
+    last_5_investments = df[df['investors'].str.contains("IDG Ventures")][['date','startup','vertical','city','round','amount']].head()
+    st.subheader("Most Recent Investments")
+    st.dataframe(last_5_investments)
 
 df = pd.read_csv("startup_clean.csv")
 
@@ -20,7 +24,6 @@ elif option == "Startup":
 
 elif option == "Investor":
     selected_investor = st.sidebar.selectbox("Select Investor",sorted(set(df['investors'].str.split(',').sum())))
-    st.title("Investor Analysis")
     btn2 = st.sidebar.button("Find investor details")
     if btn2:
         load_investor_details(selected_investor)
