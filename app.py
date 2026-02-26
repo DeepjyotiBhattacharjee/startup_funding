@@ -1,12 +1,31 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+
+st.set_page_config(layout='wide',page_title='Startup Analysis')
 
 def load_investor_details(investor):
     st.title(investor)
     # load the recent 5 investments of the investor
-    last_5_investments = df[df['investors'].str.contains("IDG Ventures")][['date','startup','vertical','city','round','amount']].head()
+    last_5_investments = df[df['investors'].str.contains(investor)][['date','startup','vertical','city','round','amount']].head()
     st.subheader("Most Recent Investments")
     st.dataframe(last_5_investments)
+
+    col1,col2 = st.columns(2)
+    with col1:
+        # biggest investments
+        big_series = df[df['investors'].str.contains(investor)].groupby('startup')['amount'].sum().sort_values(ascending=False).head()
+        st.subheader("Biggest Investments")
+        fig,ax = plt.subplots()
+        ax.bar(big_series.index,big_series.values)
+        st.pyplot(fig)
+
+    with col2:
+        investment_vertical = df[df['investors'].str.contains(investor)].groupby("vertical")["amount"].sum()
+        st.subheader("Investment Verticals")
+        fig1,ax1 = plt.subplots()
+        ax1.pie(investment_vertical, labels=investment_vertical.index,autopct="%0.01f%%")
+        st.pyplot(fig1)
 
 df = pd.read_csv("startup_clean.csv")
 
