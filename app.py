@@ -22,10 +22,34 @@ def load_investor_details(investor):
 
     with col2:
         investment_vertical = df[df['investors'].str.contains(investor)].groupby("vertical")["amount"].sum()
-        st.subheader("Investment Verticals")
+        st.subheader("Investment Vertical-wise")
         fig1,ax1 = plt.subplots()
         ax1.pie(investment_vertical, labels=investment_vertical.index,autopct="%0.01f%%")
         st.pyplot(fig1)
+    
+    col3,col4 = st.columns(2)
+    with col3:
+        round_investment = df[df['investors'].str.contains(investor)].groupby("round")["amount"].sum()
+        st.subheader("Investment Stage-wise")
+        fig2,ax2 = plt.subplots()
+        ax2.pie(round_investment,labels=round_investment.index,autopct="%0.01f%%")
+        st.pyplot(fig2)
+
+    with col4:
+        city_investment = df[df['investors'].str.contains(investor)].groupby("city")["amount"].sum()
+        st.subheader("Investment City-wise")
+        fig3,ax3 = plt.subplots()
+        ax3.pie(city_investment,labels=city_investment.index,autopct="%0.01f%%")
+        st.pyplot(fig3)
+    
+    st.subheader("Year-on-year Investments")
+    df["date"] = pd.to_datetime(df["date"])
+    df['year']=df['date'].dt.year
+    year_series = df[df['investors'].str.contains(investor)].groupby("year")["amount"].sum()
+    fig4,ax4 = plt.subplots()
+    ax4.plot(year_series)
+    st.pyplot(fig4)
+
 
 df = pd.read_csv("startup_clean.csv")
 
